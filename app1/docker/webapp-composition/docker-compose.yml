@@ -1,0 +1,22 @@
+version: "3.8"
+services:
+  web:
+    image: php-web-built
+    ports:
+      - 5173:5173
+      - 80:80
+    volumes:
+      - ../../src:/var/www/html/src
+      - vendor:/var/www/html/src/vendor
+      - /var/www/html/src/node_modules
+
+  db:
+    image: mysql8-built
+    volumes:
+      - db-store:/var/lib/mysql
+    ports:
+      - 3306:3306
+
+volumes:
+  vendor:
+  db-store:
