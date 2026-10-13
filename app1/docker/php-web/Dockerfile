@@ -17,15 +17,25 @@ ENV PATH=$PATH:/composer/vendor/bin
 
 WORKDIR /var/www/html
 
-COPY docker/php-web/apache2.conf /etc/apache2/apache2.conf
-COPY docker/php-web/000-default.conf /etc/apache2/sites-available/000-default.conf
+# php.ini のみ流用（apache2.conf / 000-default.conf は使わない）
 COPY docker/php-web/php.ini /usr/local/etc/php/php.ini
 
 COPY src/. /var/www/html
 
 RUN composer install --no-dev --optimize-autoloader
 
-ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
-RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf /etc/apache2/apache2.conf && \
+# index.php の位置をビルド時に検証（無ければここで失敗する）
+RUN test -f /var/www/html/public/index.php
+
+# Apache設定を明示的に作成
+RUN printf '<VirtualHost *:80>\n\
+    DocumentRoot /var/www/html/public\n\
+    <Directory /var/www/html/public>\n\
+        AllowOverride All\n\
+        Require all granted\n\
+    </Directory>\n\
+    ErrorLog /proc/self/fd/2\n\
+    CustomLog /proc/self/fd/1 combined\n\
+</VirtualHost>\n' > /etc/apache2/sites-available/000-default.conf && \
   a2enmod rewrite && \
   chown -R www-data:www-data storage bootstrap/cache
