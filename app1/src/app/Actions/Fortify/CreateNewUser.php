@@ -7,6 +7,7 @@ use App\Concerns\ProfileValidationRules;
 use App\Models\User;
 use Illuminate\Support\Facades\Validator;
 use Laravel\Fortify\Contracts\CreatesNewUsers;
+use Illuminate\Support\Str;
 
 class CreateNewUser implements CreatesNewUsers
 {
@@ -19,6 +20,9 @@ class CreateNewUser implements CreatesNewUsers
      */
     public function create(array $input): User
     {
+        // PostgreSQLの大文字小文字対策
+        $input['email'] = Str::lower($input['email']);
+
         Validator::make($input, [
             ...$this->profileRules(),
             'password' => $this->passwordRules(),
