@@ -25,3 +25,7 @@ COPY docker/php-web/000-default.conf /etc/apache2/sites-available/000-default.co
 COPY docker/php-web/php.ini /usr/local/etc/php/php.ini
 
 WORKDIR /var/www/html
+
+# ApacheのドキュメントルートをLaravelのpublicフォルダ（本番用）に上書き強制する
+ENV APACHE_DOCUMENT_ROOT /var/www/html/public
+RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf /etc/apache2/apache2.conf
