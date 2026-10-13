@@ -38,7 +38,7 @@
 
 ## 開発環境
 - OS：Windows11
-- 言語：HTML,CSS,JavaScript,PHP,MySQL(PostgreSQL)
+- 言語：HTML,CSS,JavaScript,PHP,MySQL
 - フレームワーク：Laravel
 - JSライブラリ：jQuery
 - エディター：Visual Studio Code

@@ -2,9 +2,9 @@ FROM php:8.3.1RC3-apache-bookworm
 
 RUN apt-get update && \
   apt-get install -y git && \
-  apt-get -y install unzip libzip-dev libicu-dev libonig-dev libfreetype6-dev libjpeg62-turbo-dev libpng-dev rsync libpq-dev && \
+  apt-get -y install unzip libzip-dev libicu-dev libonig-dev libfreetype6-dev libjpeg62-turbo-dev libpng-dev rsync && \
   apt-get clean && \
-  docker-php-ext-install intl pdo_mysql pdo_pgsql zip bcmath opcache && \
+  docker-php-ext-install intl pdo_mysql zip bcmath opcache && \
   pecl install xdebug && \
   docker-php-ext-enable xdebug && \
   docker-php-ext-configure gd --with-freetype --with-jpeg && \
@@ -20,21 +20,8 @@ ENV COMPOSER_ALLOW_SUPERUSER 1
 ENV COMPOSER_HOME /composer
 ENV PATH $PATH:/composer/vendor/bin
 
-# 1. サーバー内のルートを定義
-WORKDIR /var/www/html
+COPY ./apache2.conf /etc/apache2/apache2.conf
+COPY ./000-default.conf /etc/apache2/sites-available/000-default.conf
+COPY ./php.ini /usr/local/etc/php/php.ini
 
-# 2. 【超重要】app1フォルダの中身を確実に敷き詰めます
-# Renderがどの階層を読み込んでしまっていても、app1の中身を狙い撃ちでコピーします
-COPY app1/ /var/www/html/
-
-# 3. composer installの実行
-RUN composer install --no-dev --optimize-autoloader
-
-# 4. 設定ファイルをコピー
-COPY app1/docker/php-web/apache2.conf /etc/apache2/apache2.conf
-COPY app1/docker/php-web/000-default.conf /etc/apache2/sites-available/000-default.conf
-COPY app1/docker/php-web/php.ini /usr/local/etc/php/php.ini
-
-# ApacheのドキュメントルートをLaravelのpublicフォルダ（本番用）に上書き強制する
-ENV APACHE_DOCUMENT_ROOT /var/www/html/public
-RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf /etc/apache2/apache2.conf
+WORKDIR /var/www/html/src

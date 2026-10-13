@@ -12,15 +12,29 @@ services:
       - key: APP_DEBUG
         value: false
       - key: DB_CONNECTION
-        value: pgsql
-      - key: DB_URL
+        value: mysql
+      - key: DB_HOST
         fromDatabase:
-          name: pebble-postgres
-          property: connectionString
+          name: pebble-mysql
+          property: host
+      - key: DB_PORT
+        value: "3306"
+      - key: DB_DATABASE
+        fromDatabase:
+          name: pebble-mysql
+          property: database
+      - key: DB_USERNAME
+        fromDatabase:
+          name: pebble-mysql
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: pebble-mysql
+          property: password
 
 databases:
-  - name: pebble-postgres
+  - name: pebble-mysql
     databaseName: development
     user: student
     region: ohio
-    plan: free
+    plan: starter
