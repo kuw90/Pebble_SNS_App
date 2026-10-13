@@ -23,16 +23,17 @@ ENV PATH $PATH:/composer/vendor/bin
 # 1. サーバー内のルートを定義
 WORKDIR /var/www/html
 
-# 2. rootDir(app1)の直下にあるLaravelの全ファイルをそのままコピー（キャッシュをリセットさせます）
-COPY . /var/www/html
+# 2. 【バグ対策】app1フォルダの中身を確実に敷き詰めます
+# もし全体ルートを読み込んでしまっていても、app1フォルダの中身を狙い撃ちでコピーします
+COPY app1/ /var/www/html/
 
 # 3. composer installの実行
 RUN composer install --no-dev --optimize-autoloader
 
-# 4. rootDir基準の正しい位置から設定ファイルをコピー
-COPY docker/php-web/apache2.conf /etc/apache2/apache2.conf
-COPY docker/php-web/000-default.conf /etc/apache2/sites-available/000-default.conf
-COPY docker/php-web/php.ini /usr/local/etc/php/php.ini
+# 4. 設定ファイルをコピー
+COPY app1/docker/php-web/apache2.conf /etc/apache2/apache2.conf
+COPY app1/docker/php-web/000-default.conf /etc/apache2/sites-available/000-default.conf
+COPY app1/docker/php-web/php.ini /usr/local/etc/php/php.ini
 
 # ApacheのドキュメントルートをLaravelのpublicフォルダ（本番用）に上書き強制する
 ENV APACHE_DOCUMENT_ROOT /var/www/html/public
