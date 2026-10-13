@@ -20,15 +20,20 @@ ENV COMPOSER_ALLOW_SUPERUSER 1
 ENV COMPOSER_HOME /composer
 ENV PATH $PATH:/composer/vendor/bin
 
-COPY app1/ /var/www/html/
+# 1. 作業ディレクトリを先に定義します
+WORKDIR /var/www/html
+
+# 2. app1フォルダの中身を、ズレなくカレントディレクトリ（/var/www/html）に展開します
+COPY app1/. .
+
+# 3. 正しいフォルダ位置でcomposer installを実行します
 RUN composer install --no-dev --optimize-autoloader
 
+# 4. 設定ファイルをコピーします
 COPY app1/docker/php-web/apache2.conf /etc/apache2/apache2.conf
 COPY app1/docker/php-web/000-default.conf /etc/apache2/sites-available/000-default.conf
 COPY app1/docker/php-web/php.ini /usr/local/etc/php/php.ini
 
-WORKDIR /var/www/html
-
-# ApacheのドキュメントルートをLaravelのpublicフォルダ（本番用）に上書き強制する
+# ApacheのドキュメントルートをLaravelのpublicフォルダ（本番用）に上書き強制します
 ENV APACHE_DOCUMENT_ROOT /var/www/html/public
 RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf /etc/apache2/apache2.conf
