@@ -20,6 +20,9 @@ ENV COMPOSER_ALLOW_SUPERUSER 1
 ENV COMPOSER_HOME /composer
 ENV PATH $PATH:/composer/vendor/bin
 
+COPY app1/ /var/www/html/
+RUN composer install --no-dev --optimize-autoloader
+
 COPY app1/docker/php-web/apache2.conf /etc/apache2/apache2.conf
 COPY app1/docker/php-web/000-default.conf /etc/apache2/sites-available/000-default.conf
 COPY app1/docker/php-web/php.ini /usr/local/etc/php/php.ini
