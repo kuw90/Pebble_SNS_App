@@ -4,7 +4,7 @@ RUN apt-get update && \
   apt-get install -y git && \
   apt-get -y install unzip libzip-dev libicu-dev libonig-dev libfreetype6-dev libjpeg62-turbo-dev libpng-dev rsync && \
   apt-get clean && \
-  docker-php-ext-install intl pdo_mysql zip bcmath opcache && \
+  docker-php-ext-install intl pdo_mysql pdo_pgsql zip bcmath opcache && \
   pecl install xdebug && \
   docker-php-ext-enable xdebug && \
   docker-php-ext-configure gd --with-freetype --with-jpeg && \
