@@ -23,8 +23,8 @@ ENV PATH $PATH:/composer/vendor/bin
 # 1. サーバー内のルートを定義
 WORKDIR /var/www/html
 
-# 2. 【バグ対策】app1フォルダの中身を確実に敷き詰めます
-# もし全体ルートを読み込んでしまっていても、app1フォルダの中身を狙い撃ちでコピーします
+# 2. 【超重要】app1フォルダの中身を確実に敷き詰めます
+# Renderがどの階層を読み込んでしまっていても、app1の中身を狙い撃ちでコピーします
 COPY app1/ /var/www/html/
 
 # 3. composer installの実行
