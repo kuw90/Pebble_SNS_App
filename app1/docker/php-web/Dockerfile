@@ -20,9 +20,9 @@ ENV COMPOSER_ALLOW_SUPERUSER 1
 ENV COMPOSER_HOME /composer
 ENV PATH $PATH:/composer/vendor/bin
 
-COPY docker/php-web/apache2.conf /etc/apache2/apache2.conf
-COPY docker/php-web/000-default.conf /etc/apache2/sites-available/000-default.conf
-COPY docker/php-web/php.ini /usr/local/etc/php/php.ini
+COPY app1/docker/php-web/apache2.conf /etc/apache2/apache2.conf
+COPY app1/docker/php-web/000-default.conf /etc/apache2/sites-available/000-default.conf
+COPY app1/docker/php-web/php.ini /usr/local/etc/php/php.ini
 
 WORKDIR /var/www/html
 
