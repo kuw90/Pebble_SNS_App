@@ -2,7 +2,7 @@ FROM php:8.3.1RC3-apache-bookworm
 
 RUN apt-get update && \
   apt-get install -y git && \
-  apt-get -y install unzip libzip-dev libicu-dev libonig-dev libfreetype6-dev libjpeg62-turbo-dev libpng-dev rsync && \
+  apt-get -y install unzip libzip-dev libicu-dev libonig-dev libfreetype6-dev libjpeg62-turbo-dev libpng-dev rsync libpq-dev && \
   apt-get clean && \
   docker-php-ext-install intl pdo_mysql pdo_pgsql zip bcmath opcache && \
   pecl install xdebug && \
