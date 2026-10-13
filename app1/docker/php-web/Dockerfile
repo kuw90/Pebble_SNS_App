@@ -1,6 +1,3 @@
-FROM app AS final
-→ docker.io/library/app:latest: not found
-
 FROM php:8.3-apache-bookworm AS app
 
 RUN apt-get update && \
@@ -27,7 +24,6 @@ RUN composer install --no-dev --optimize-autoloader
 RUN test -f /var/www/html/public/index.php
 
 
-# ===== ステージ2: フロントエンドのビルド =====
 FROM node:22-bookworm-slim AS assets
 
 WORKDIR /app
@@ -35,7 +31,6 @@ COPY --from=app /var/www/html /app
 RUN npm ci && npm run build
 
 
-# ===== ステージ3: 最終イメージ =====
 FROM app AS final
 
 COPY --from=assets /app/public/build /var/www/html/public/build
