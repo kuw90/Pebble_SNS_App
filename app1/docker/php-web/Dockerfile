@@ -5,35 +5,27 @@ RUN apt-get update && \
   apt-get -y install unzip libzip-dev libicu-dev libonig-dev libfreetype6-dev libjpeg62-turbo-dev libpng-dev rsync libpq-dev && \
   apt-get clean && \
   docker-php-ext-install intl pdo_mysql pdo_pgsql zip bcmath opcache && \
-  pecl install xdebug && \
-  docker-php-ext-enable xdebug && \
   docker-php-ext-configure gd --with-freetype --with-jpeg && \
   docker-php-ext-install -j$(nproc) gd exif && \
-  # install composer
   cd /usr/bin && \
-  curl -s http://getcomposer.org/installer | php && \
-  ln -s /usr/bin/composer.phar /usr/bin/composer && \
-  # install Node.js, npm
-  apt install nodejs npm -y
+  curl -s https://getcomposer.org/installer | php && \
+  ln -s /usr/bin/composer.phar /usr/bin/composer
 
-ENV COMPOSER_ALLOW_SUPERUSER 1
-ENV COMPOSER_HOME /composer
-ENV PATH $PATH:/composer/vendor/bin
+ENV COMPOSER_ALLOW_SUPERUSER=1
+ENV COMPOSER_HOME=/composer
+ENV PATH=$PATH:/composer/vendor/bin
 
-# 1. サーバー内のルートを定義
 WORKDIR /var/www/html
 
-# 2. rootDir(app1)の中身（Laravel本体）をサーバー内に丸ごとコピー
-COPY . /var/www/html
-
-# 3. 本番用のインストール（最適化）
-RUN composer install --no-dev --optimize-autoloader
-
-# 4. rootDirを基準とした正しい相対パスで設定ファイルをコピー（修正箇所！）
 COPY docker/php-web/apache2.conf /etc/apache2/apache2.conf
 COPY docker/php-web/000-default.conf /etc/apache2/sites-available/000-default.conf
 COPY docker/php-web/php.ini /usr/local/etc/php/php.ini
 
-# Apache chimneysをLaravelのpublicフォルダ（本番用）に上書き強制する
-ENV APACHE_DOCUMENT_ROOT /var/www/html/public
-RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf /etc/apache2/apache2.conf
+COPY src/. /var/www/html
+
+RUN composer install --no-dev --optimize-autoloader
+
+ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
+RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf /etc/apache2/apache2.conf && \
+  a2enmod rewrite && \
+  chown -R www-data:www-data storage bootstrap/cache
