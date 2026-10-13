@@ -35,6 +35,11 @@ FROM app AS final
 
 COPY --from=assets /app/public/build /var/www/html/public/build
 
+RUN mkdir -p /var/www/html/storage/app/public/images && \
+  rm -rf /var/www/html/public/storage && \
+  ln -sfn /var/www/html/storage/app/public /var/www/html/public/storage && \
+  chown -R www-data:www-data storage bootstrap/cache public/build
+
 RUN printf '<VirtualHost *:80>\n\
     DocumentRoot /var/www/html/public\n\
     <Directory /var/www/html/public>\n\
