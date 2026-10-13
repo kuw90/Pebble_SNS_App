@@ -39,3 +39,5 @@ RUN printf '<VirtualHost *:80>\n\
 </VirtualHost>\n' > /etc/apache2/sites-available/000-default.conf && \
   a2enmod rewrite && \
   chown -R www-data:www-data storage bootstrap/cache
+
+  CMD ["sh", "-c", "php artisan migrate --force && apache2-foreground"]
