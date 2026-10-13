@@ -40,6 +40,7 @@
                     </div>
                 </div>
                 <br>
+                <flux:button variant="primary" type="submit" class="w-full mt-10">編集する</flux:button>
             </form>
         </div>
     </div>
