@@ -1,4 +1,7 @@
-FROM php:8.3.1RC3-apache-bookworm
+FROM app AS final
+→ docker.io/library/app:latest: not found
+
+FROM php:8.3-apache-bookworm AS app
 
 RUN apt-get update && \
   apt-get install -y git && \
