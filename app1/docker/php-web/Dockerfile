@@ -17,17 +17,26 @@ ENV PATH=$PATH:/composer/vendor/bin
 
 WORKDIR /var/www/html
 
-# php.ini のみ流用（apache2.conf / 000-default.conf は使わない）
 COPY docker/php-web/php.ini /usr/local/etc/php/php.ini
-
 COPY src/. /var/www/html
 
 RUN composer install --no-dev --optimize-autoloader
-
-# index.php の位置をビルド時に検証（無ければここで失敗する）
 RUN test -f /var/www/html/public/index.php
 
-# Apache設定を明示的に作成
+
+# ===== ステージ2: フロントエンドのビルド =====
+FROM node:22-bookworm-slim AS assets
+
+WORKDIR /app
+COPY --from=app /var/www/html /app
+RUN npm ci && npm run build
+
+
+# ===== ステージ3: 最終イメージ =====
+FROM app AS final
+
+COPY --from=assets /app/public/build /var/www/html/public/build
+
 RUN printf '<VirtualHost *:80>\n\
     DocumentRoot /var/www/html/public\n\
     <Directory /var/www/html/public>\n\
@@ -37,7 +46,8 @@ RUN printf '<VirtualHost *:80>\n\
     ErrorLog /proc/self/fd/2\n\
     CustomLog /proc/self/fd/1 combined\n\
 </VirtualHost>\n' > /etc/apache2/sites-available/000-default.conf && \
+  echo "ServerName localhost" >> /etc/apache2/apache2.conf && \
   a2enmod rewrite && \
-  chown -R www-data:www-data storage bootstrap/cache
+  chown -R www-data:www-data storage bootstrap/cache public/build
 
-  CMD ["sh", "-c", "php artisan migrate --force && apache2-foreground"]
+CMD ["sh", "-c", "php artisan migrate --force && apache2-foreground"]
