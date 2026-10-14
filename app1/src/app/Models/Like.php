@@ -6,6 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class Like extends Model
 {
+    // likesテーブルには id カラムが無いため、主キーの自動取得を無効にする
+    public $incrementing = false;
+
     // リレーション (Like belongs to a Post)
     public function post()
     {
