@@ -1,12 +1,29 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
+use App\Models\User;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\LikeController;
 use App\Http\Controllers\AdminUserController;
 
 Route::view('/', 'welcome')->name('home');
+
+// ゲストログイン（ログイン前に使うので auth グループの外）
+Route::post('/guest-login', function () {
+    $user = User::firstOrCreate(
+        ['email' => 'guest@example.com'],
+        ['name' => 'ゲスト', 'password' => Hash::make(Str::random(32))]
+    );
+
+    Auth::login($user);
+    request()->session()->regenerate();
+
+    return redirect()->route('post.index');
+})->middleware('guest')->name('guest.login');
 
 // Route::middleware(['auth', 'verified'])->group(function () {
 //     Route::view('dashboard', 'dashboard')->name('dashboard');

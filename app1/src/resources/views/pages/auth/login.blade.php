@@ -68,6 +68,14 @@
             </div>
         </form>
 
+        <!-- ゲストログイン追加 -->
+        <form method="POST" action="{{ route('guest.login') }}" class="w-full mt-2">
+            @csrf
+            <flux:button variant="outline" type="submit" class="w-full">
+                ゲストとしてログイン
+            </flux:button>
+        </form>
+
         @if (Route::has('register'))
             <div class="space-x-1 text-sm text-center rtl:space-x-reverse text-zinc-600 dark:text-zinc-400">
                 <span>{{ __('Don\'t have an account?') }}</span>
