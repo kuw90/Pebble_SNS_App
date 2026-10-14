@@ -10,7 +10,9 @@
         <div class="flex items-center gap-2 px-1 py-1.5 text-start text-sm">
             <flux:avatar
                 :name="auth()->user()->name"
-                :src="asset('storage/avatar/' . (auth()->user()->avatar ?? 'user_default.jpg'))"
+                :src="auth()->user()->avatar
+                    ? asset('storage/avatar/' . auth()->user()->avatar)
+                    : asset('images/user_default.jpg')"
             />
             <div class="grid flex-1 text-start text-sm leading-tight">
                 <flux:heading class="truncate">{{ auth()->user()->name }}</flux:heading>

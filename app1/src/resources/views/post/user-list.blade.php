@@ -33,7 +33,7 @@
                         <tr>
                             <td class="px-6 py-4 whitespace-nowrap">{{ $user->id }}</td>
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <img src="{{asset('storage/avatar/'.($user->avatar??'user_default.jpg'))}}" class="w-10">
+                                <img src="{{ $user->avatar ? asset('storage/avatar/'.$user->avatar) : asset('images/user_default.jpg') }}" class="w-10">
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">{{ $user->name }}</td>
                             <td class="px-6 py-4 whitespace-nowrap">{{ $user->email }}</td>
@@ -59,7 +59,7 @@
                     <div class="border rounded-lg p-4 bg-white">
 
                         <div class="flex items-center gap-3 mb-3">
-                            <img src="{{ asset('storage/avatar/'.($user->avatar ?? 'user_default.jpg')) }}"
+                            <img src="{{ $user->avatar ? asset('storage/avatar/'.$user->avatar) : asset('images/user_default.jpg') }}"
                                 class="rounded-lg h-12 w-14">
                             <div>
                                 <div class="font-bold">{{ $user->name }}</div>
