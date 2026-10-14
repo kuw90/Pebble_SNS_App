@@ -53,4 +53,4 @@ RUN printf '<VirtualHost *:80>\n\
   a2enmod rewrite && \
   chown -R www-data:www-data storage bootstrap/cache public/build
 
-CMD ["sh", "-c", "php artisan migrate --force && apache2-foreground"]
+CMD ["sh", "-c", "mkdir -p /var/www/html/storage/app/public/images && chown -R www-data:www-data /var/www/html/storage/app/public && php artisan migrate --force && apache2-foreground"]

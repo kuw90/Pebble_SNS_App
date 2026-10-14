@@ -6,6 +6,10 @@ services:
     plan: starter
     rootDir: app1
     dockerfilePath: docker/php-web/Dockerfile
+    disk:
+      name: uploads
+      mountPath: /var/www/html/storage/app/public
+      sizeGB: 5
     envVars:
       - key: APP_ENV
         value: production
