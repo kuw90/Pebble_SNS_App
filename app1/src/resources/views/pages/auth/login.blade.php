@@ -66,12 +66,9 @@
                     {{ __('Log in') }}
                 </flux:button>
             </div>
-        </form>
 
-        <!-- ゲストログイン追加 -->
-        <form method="POST" action="{{ route('guest.login') }}" class="w-full mt-2">
-            @csrf
-            <flux:button variant="outline" type="submit" class="w-full">
+            <!-- ゲストログイン追加 -->
+            <flux:button variant="outline" type="submit" class="w-full" formaction="{{ route('guest.login') }}" formnovalidate>
                 ゲストとしてログイン
             </flux:button>
         </form>
